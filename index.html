@@ -13,7 +13,7 @@
         <a-entity camera></a-entity>
 
         <a-entity id="ar-object" geometry="primitive: box; width: 3; height: 3; depth: 3;"
-            material="color: red;" position="0 0 -5" visible="false"></a-entity>
+            material="color: red;" position="0 0 -5" visible="true"></a-entity>
     </a-scene>
 
     <script>
@@ -21,11 +21,11 @@
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
             
-alert('position', `${longitude} 0 ${latitude}`);
+            alert('position', `${longitude} 0 ${latitude}`);
             // Set AR object position based on user's location
             var arObject = document.getElementById('ar-object');
-            arObject.setAttribute('position', `${longitude} 0 ${latitude}`);
-            arObject.setAttribute('visible', 'true');
+            // arObject.setAttribute('position', `${longitude} 0 ${latitude}`);
+            // arObject.setAttribute('visible', 'true');
         });
     </script>
 </body>

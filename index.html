@@ -20,7 +20,8 @@
         navigator.geolocation.getCurrentPosition(function (position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
-
+            
+alert('position', `${longitude} 0 ${latitude}`);
             // Set AR object position based on user's location
             var arObject = document.getElementById('ar-object');
             arObject.setAttribute('position', `${longitude} 0 ${latitude}`);

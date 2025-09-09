@@ -11,36 +11,44 @@
 <body style="margin: 0; overflow: hidden;">
     <a-scene
         vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; trackingMethod: best; positionRatioAccuracy: high;"
-        renderer="antialias: true; alpha: true"
-        embedded>
+        arjs="sourceType: webcam; debugUIEnabled: true;"
+        renderer="logarithmicDepthBuffer: true;"
+        embedded
+        gesture-detector
+        id="scene">
         
         <a-camera
-            id="camera"
-            gps-camera="minDistance: 5; maxDistance: 1000; simulateLatitude: 0; simulateLongitude: 0;"
-            rotation-reader
-            look-controls-enabled="false"
-            arjs-look-controls="smoothingFactor: 0.1"
-            cursor="rayOrigin: mouse">
+            id="camera1"
+            gps-camera="simulateLatitude: 19.257877; simulateLongitude: 72.963085; simulateAltitude: 300;"
+            rotation-reader>
         </a-camera>
 
         <!-- Box at the specified geolocation -->
         <a-box
-            material="color: red; opacity: 0.8;"
-            geometry="width: 2; height: 2; depth: 2;"
+            id="box"
+            material="color: red;"
+            geometry="primitive: box; width: 5; height: 5; depth: 5;"
             gps-entity-place="latitude: 19.257877; longitude: 72.963085;"
-            scale="1 1 1">
+            visible="true">
         </a-box>
 
         <!-- Text label for the location -->
         <a-text
-            value="Target Location"
-            position="0 3 0"
+            value="TARGET HERE"
+            position="0 8 0"
             align="center"
-            color="white"
-            scale="10 10 10"
+            color="yellow"
+            scale="20 20 20"
             gps-entity-place="latitude: 19.257877; longitude: 72.963085;">
         </a-text>
+
+        <!-- Alternative larger box for testing -->
+        <a-cylinder
+            material="color: blue; opacity: 0.7;"
+            geometry="radius: 3; height: 10;"
+            position="0 0 0"
+            gps-entity-place="latitude: 19.257877; longitude: 72.963085;">
+        </a-cylinder>
     </a-scene>
 
     <div id="info" style="position: fixed; top: 10px; left: 10px; color: white; font-family: Arial; z-index: 999; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; max-width: 300px;">
@@ -171,20 +179,58 @@
             });
         }
 
-        // Add logging for GPS entities
+        // Enhanced GPS entity debugging and management
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const gpsEntities = document.querySelectorAll('[gps-entity-place]');
-                document.getElementById('debug').innerHTML = `Found ${gpsEntities.length} GPS entities`;
-                
-                gpsEntities.forEach(function(entity, index) {
-                    entity.addEventListener('gps-entity-place-added', function() {
-                        console.log('GPS entity added:', entity);
-                        document.getElementById('debug').innerHTML += `<br>Entity ${index} placed`;
+            const scene = document.querySelector('a-scene');
+            
+            scene.addEventListener('loaded', function() {
+                setTimeout(function() {
+                    const gpsEntities = document.querySelectorAll('[gps-entity-place]');
+                    document.getElementById('debug').innerHTML = `Found ${gpsEntities.length} GPS entities`;
+                    
+                    gpsEntities.forEach(function(entity, index) {
+                        // Make entities more visible
+                        entity.setAttribute('visible', true);
+                        
+                        entity.addEventListener('gps-entity-place-added', function() {
+                            console.log('GPS entity added:', entity);
+                            document.getElementById('debug').innerHTML = `Entity ${index} placed at GPS location`;
+                        });
+                        
+                        entity.addEventListener('gps-entity-place-loaded', function() {
+                            console.log('GPS entity loaded:', entity);
+                            document.getElementById('debug').innerHTML += `<br>Entity ${index} loaded and visible`;
+                        });
                     });
-                });
-            }, 2000);
+                    
+                    // Force update GPS entities position
+                    const camera = document.getElementById('camera1');
+                    if (camera.components && camera.components['gps-camera']) {
+                        camera.components['gps-camera'].tick();
+                    }
+                }, 3000);
+            });
         });
+
+        // Add compass debugging
+        window.addEventListener('deviceorientationabsolute', function(event) {
+            const compass = event.alpha; // 0-360 degrees
+            if (compass !== null) {
+                document.getElementById('debug').innerHTML += `<br>Compass: ${compass.toFixed(0)}°`;
+            }
+        });
+
+        // Test if entities are being created
+        setTimeout(function() {
+            const box = document.getElementById('box');
+            if (box) {
+                // Force the box to be visible and larger
+                box.setAttribute('material', 'color: red; opacity: 1;');
+                box.setAttribute('geometry', 'width: 10; height: 10; depth: 10;');
+                box.setAttribute('visible', true);
+                console.log('Box forced to be visible');
+            }
+        }, 5000);
     </script>
 </body>
 

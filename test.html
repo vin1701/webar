@@ -4,27 +4,86 @@
 <head>
     <meta charset="utf-8">
     <title>Location-based WebAR</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.2/aframe/build/aframe-ar.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 </head>
 
-<body>
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <a-entity camera></a-entity>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene
+        vr-mode-ui="enabled: false"
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+        renderer="antialias: true; alpha: true">
+        
+        <a-camera
+            gps-camera
+            rotation-reader
+            look-controls-enabled="false"
+            arjs-device-orientation-controls>
+        </a-camera>
 
-        <a-entity id="ar-object" geometry="primitive: box; width: 1; height: 1; depth: 1;"
-            material="color: red;" position="0 0 -5" visible="false"></a-entity>
+        <!-- Box at the specified geolocation -->
+        <a-box
+            material="color: red; opacity: 0.8;"
+            geometry="width: 2; height: 2; depth: 2;"
+            gps-entity-place="latitude: 19.2579788; longitude: 72.9635206;"
+            animation-mixer>
+        </a-box>
+
+        <!-- Text label for the location -->
+        <a-text
+            value="Target Location"
+            position="0 3 0"
+            align="center"
+            color="white"
+            gps-entity-place="latitude: 19.2579788; longitude: 72.9635206;">
+        </a-text>
     </a-scene>
 
-    <script>
-        navigator.geolocation.getCurrentPosition(function (position) {
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
+    <div id="info" style="position: fixed; top: 10px; left: 10px; color: white; font-family: Arial; z-index: 999; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;">
+        <div>Looking for target location...</div>
+        <div id="distance"></div>
+    </div>
 
-            // Set AR object position based on user's location
-            var arObject = document.getElementById('ar-object');
-            //arObject.setAttribute('position', `${longitude} 0 ${latitude}`);
-            //arObject.setAttribute('visible', 'true');
+    <script>
+        // Wait for camera to be ready
+        const camera = document.querySelector('[gps-camera]');
+        
+        camera.addEventListener('gps-camera-update-position', function(e) {
+            const position = e.detail.position;
+            const targetLat = 19.2579788;
+            const targetLng = 72.9635206;
+            
+            // Calculate distance to target
+            const distance = calculateDistance(position.latitude, position.longitude, targetLat, targetLng);
+            
+            document.getElementById('distance').innerHTML = `Distance to target: ${distance.toFixed(2)} meters`;
+            
+            if (distance < 50) {
+                document.getElementById('info').innerHTML = '<div style="color: green;">Target location is nearby!</div>';
+            }
+        });
+
+        // Calculate distance between two coordinates using Haversine formula
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lon2-lon1) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            const distance = R * c;
+            return distance;
+        }
+
+        // Handle GPS errors
+        window.addEventListener('gps-camera-error', function(e) {
+            console.error('GPS Camera Error:', e.detail);
+            document.getElementById('info').innerHTML = '<div style="color: red;">GPS Error: Please enable location services</div>';
         });
     </script>
 </body>

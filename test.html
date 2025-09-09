@@ -50,8 +50,8 @@
         
         camera.addEventListener('gps-camera-update-position', function(e) {
             const position = e.detail.position;
-            const targetLat = 19.2579788;
-            const targetLng = 72.9635206;
+            const targetLat = 19.2579788;//19.2579788;
+            const targetLng = 72.9635206;//72.9635206;
             
             // Calculate distance to target
             const distance = calculateDistance(position.latitude, position.longitude, targetLat, targetLng);

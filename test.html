@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>Location-based WebAR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
@@ -39,29 +39,22 @@
         </a-text>
     </a-scene>
 
-    <div id="info" style="position: fixed; top: 10px; left: 10px; color: white; font-family: Arial; z-index: 999; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;">
-        <div>Looking for target location...</div>
+    <div id="info" style="position: fixed; top: 10px; left: 10px; color: white; font-family: Arial; z-index: 999; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; max-width: 300px;">
+        <div id="status">Initializing GPS...</div>
+        <div id="coordinates"></div>
         <div id="distance"></div>
+        <div id="debug"></div>
     </div>
 
     <script>
-        // Wait for camera to be ready
-        const camera = document.querySelector('[gps-camera]');
+        let userPosition = null;
+        const targetLat = 19.257877;//19.2579788;//19.2579788;
+        const targetLng = 72.963085;//72.9635206;//72.9635206;
         
-        camera.addEventListener('gps-camera-update-position', function(e) {
-            const position = e.detail.position;
-            const targetLat = 19.257877;//19.2579788;//19.2579788;
-            const targetLng = 72.963085;//72.9635206;//72.9635206;
-            
-            // Calculate distance to target
-            const distance = calculateDistance(position.latitude, position.longitude, targetLat, targetLng);
-            
-            document.getElementById('distance').innerHTML = `Distance to target: ${distance.toFixed(2)} meters`;
-            
-            if (distance < 50) {
-                document.getElementById('info').innerHTML = '<div style="color: green;">Target location is nearby!</div>';
-            }
-        });
+        // Update status
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+        }
 
         // Calculate distance between two coordinates using Haversine formula
         function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -80,11 +73,99 @@
             return distance;
         }
 
-        // Handle GPS errors
-        window.addEventListener('gps-camera-error', function(e) {
-            console.error('GPS Camera Error:', e.detail);
-            document.getElementById('info').innerHTML = '<div style="color: red;">GPS Error: Please enable location services</div>';
+        function updateDistance(lat, lng) {
+            const distance = calculateDistance(lat, lng, targetLat, targetLng);
+            document.getElementById('distance').innerHTML = `Distance: ${distance.toFixed(0)}m`;
+            
+            if (distance < 50) {
+                updateStatus('<span style="color: green;">Target is nearby!</span>');
+            } else if (distance < 200) {
+                updateStatus('<span style="color: yellow;">Getting closer...</span>');
+            } else {
+                updateStatus('<span style="color: white;">Looking for target...</span>');
+            }
+        }
+
+        // Use browser geolocation API as fallback
+        function startGeolocation() {
+            updateStatus('Requesting location permission...');
+            
+            if (!navigator.geolocation) {
+                updateStatus('<span style="color: red;">Geolocation not supported</span>');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    userPosition = position;
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    document.getElementById('coordinates').innerHTML = 
+                        `Your location: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    
+                    updateDistance(lat, lng);
+                    
+                    // Start watching position
+                    navigator.geolocation.watchPosition(
+                        function(position) {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            document.getElementById('coordinates').innerHTML = 
+                                `Your location: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                            updateDistance(lat, lng);
+                        },
+                        function(error) {
+                            updateStatus('<span style="color: red;">Location error: ' + error.message + '</span>');
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            maximumAge: 30000,
+                            timeout: 27000
+                        }
+                    );
+                },
+                function(error) {
+                    updateStatus('<span style="color: red;">Location denied or unavailable</span>');
+                    document.getElementById('debug').innerHTML = `Error: ${error.message}`;
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        }
+
+        // Wait for scene to load
+        document.addEventListener('DOMContentLoaded', function() {
+            const scene = document.querySelector('a-scene');
+            
+            if (scene.hasLoaded) {
+                startGeolocation();
+            } else {
+                scene.addEventListener('loaded', function() {
+                    startGeolocation();
+                });
+            }
         });
+
+        // Also try GPS camera events
+        const camera = document.querySelector('[gps-camera]');
+        if (camera) {
+            camera.addEventListener('gps-camera-update-position', function(e) {
+                if (e.detail && e.detail.position) {
+                    const position = e.detail.position;
+                    document.getElementById('coordinates').innerHTML = 
+                        `GPS Camera: ${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}`;
+                    updateDistance(position.latitude, position.longitude);
+                }
+            });
+
+            camera.addEventListener('gps-camera-error', function(e) {
+                document.getElementById('debug').innerHTML = `GPS Camera Error: ${e.detail}`;
+            });
+        }
     </script>
 </body>
 

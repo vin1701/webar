@@ -11,22 +11,25 @@
 <body style="margin: 0; overflow: hidden;">
     <a-scene
         vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
-        renderer="antialias: true; alpha: true">
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; trackingMethod: best; positionRatioAccuracy: high;"
+        renderer="antialias: true; alpha: true"
+        embedded>
         
         <a-camera
-            gps-camera
+            id="camera"
+            gps-camera="minDistance: 5; maxDistance: 1000; simulateLatitude: 0; simulateLongitude: 0;"
             rotation-reader
             look-controls-enabled="false"
-            arjs-device-orientation-controls>
+            arjs-look-controls="smoothingFactor: 0.1"
+            cursor="rayOrigin: mouse">
         </a-camera>
 
         <!-- Box at the specified geolocation -->
         <a-box
             material="color: red; opacity: 0.8;"
             geometry="width: 2; height: 2; depth: 2;"
-            gps-entity-place="latitude: 19.2579788; longitude: 72.9635206;"
-            animation-mixer>
+            gps-entity-place="latitude: 19.257877; longitude: 72.963085;"
+            scale="1 1 1">
         </a-box>
 
         <!-- Text label for the location -->
@@ -35,7 +38,8 @@
             position="0 3 0"
             align="center"
             color="white"
-            gps-entity-place="latitude: 19.2579788; longitude: 72.9635206;">
+            scale="10 10 10"
+            gps-entity-place="latitude: 19.257877; longitude: 72.963085;">
         </a-text>
     </a-scene>
 
@@ -166,6 +170,21 @@
                 document.getElementById('debug').innerHTML = `GPS Camera Error: ${e.detail}`;
             });
         }
+
+        // Add logging for GPS entities
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const gpsEntities = document.querySelectorAll('[gps-entity-place]');
+                document.getElementById('debug').innerHTML = `Found ${gpsEntities.length} GPS entities`;
+                
+                gpsEntities.forEach(function(entity, index) {
+                    entity.addEventListener('gps-entity-place-added', function() {
+                        console.log('GPS entity added:', entity);
+                        document.getElementById('debug').innerHTML += `<br>Entity ${index} placed`;
+                    });
+                });
+            }, 2000);
+        });
     </script>
 </body>
 

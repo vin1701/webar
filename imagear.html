@@ -7,8 +7,20 @@
       <a-assets>
         <img id="myImage" src="https://i.pinimg.com/originals/57/e3/c8/57e3c8a764413d509584fc526825b980.gif">
       </a-assets>
-      <a-image src="#myImage" position="0 0 -20" scale="10 10 10"></a-image>
+      <a-image src="#myImage" position="0 0 -20" scale="5 5 5"></a-image>
       <a-camera-static/>
+    </a-scene>
+<!-- Scene 2 -->
+    <a-scene>
+      <a-assets>
+        <video id="penguin-sledding" autoplay loop="true" src="https://i.pinimg.com/originals/57/e3/c8/57e3c8a764413d509584fc526825b980.gif"></video>
+      </a-assets>
+    
+      <!-- Using the asset management system. -->
+      <a-video src="#penguin-sledding" width="16" height="9" position="0 0 -20"></a-video>
+    
+      <!-- Defining the URL inline. Not recommended but more comfortable for web developers. -->
+      <a-video src="https://i.pinimg.com/originals/57/e3/c8/57e3c8a764413d509584fc526825b980.gif"></a-video>
     </a-scene>
   </body>
 </html>

@@ -6,7 +6,6 @@
     <title>Happy Birthday AR Fireworks</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
-    <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   </head>
 
@@ -33,50 +32,120 @@
         gps-entity-place="latitude: 19.258066; longitude: 72.963154"
         position="0 10 0">
         
-        <!-- Central Firework Burst -->
-        <a-entity
-          particle-system="preset: default; color: #FF0040,#FF6600,#FFAA00,#00FF88,#0088FF,#8800FF; 
-                           particleCount: 100; maxAge: 3; positionSpread: 2 2 2; 
-                           velocityValue: 8 8 8; velocitySpread: 4 4 4; accelerationValue: 0 -5 0"
-          position="0 0 0"
-          animation="property: particle-system.velocityValue; to: 12 12 12; startEvents: firework1; dur: 1000"
-        ></a-entity>
+        <!-- Central Firework Burst - Red -->
+        <a-entity id="firework1" position="0 0 0">
+          <a-sphere color="#FF0040" radius="0.3" position="0 0 0" opacity="0.8"
+            animation__burst="property: scale; to: 8 8 8; dur: 1000; startEvents: burst1"
+            animation__fade="property: material.opacity; to: 0; dur: 1000; startEvents: burst1">
+          </a-sphere>
+          <a-sphere color="#FF6600" radius="0.2" position="2 1 0" opacity="0.9"
+            animation__burst="property: scale; to: 6 6 6; dur: 800; startEvents: burst1; delay: 100"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst1; delay: 100">
+          </a-sphere>
+          <a-sphere color="#FFAA00" radius="0.2" position="-2 -1 1" opacity="0.9"
+            animation__burst="property: scale; to: 6 6 6; dur: 800; startEvents: burst1; delay: 200"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst1; delay: 200">
+          </a-sphere>
+          <a-sphere color="#FF0040" radius="0.2" position="1 -2 -1" opacity="0.9"
+            animation__burst="property: scale; to: 6 6 6; dur: 800; startEvents: burst1; delay: 150"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst1; delay: 150">
+          </a-sphere>
+        </a-entity>
 
-        <!-- Left Firework -->
-        <a-entity
-          particle-system="preset: snow; color: #FF1493,#FF69B4,#FFB6C1; 
-                           particleCount: 80; maxAge: 2.5; positionSpread: 1.5 1.5 1.5; 
-                           velocityValue: 6 10 6; velocitySpread: 3 3 3"
-          position="-8 0 0"
-          animation="property: particle-system.velocityValue; to: 10 15 10; startEvents: firework2; dur: 1200"
-        ></a-entity>
+        <!-- Left Firework - Pink -->
+        <a-entity id="firework2" position="-8 2 0">
+          <a-sphere color="#FF1493" radius="0.3" position="0 0 0" opacity="0.8"
+            animation__burst="property: scale; to: 7 7 7; dur: 1000; startEvents: burst2"
+            animation__fade="property: material.opacity; to: 0; dur: 1000; startEvents: burst2">
+          </a-sphere>
+          <a-sphere color="#FF69B4" radius="0.2" position="1.5 1.5 0" opacity="0.9"
+            animation__burst="property: scale; to: 5 5 5; dur: 800; startEvents: burst2; delay: 100"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst2; delay: 100">
+          </a-sphere>
+          <a-sphere color="#FFB6C1" radius="0.2" position="-1.5 -1.5 0.5" opacity="0.9"
+            animation__burst="property: scale; to: 5 5 5; dur: 800; startEvents: burst2; delay: 200"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst2; delay: 200">
+          </a-sphere>
+        </a-entity>
 
-        <!-- Right Firework -->
-        <a-entity
-          particle-system="preset: default; color: #00FF00,#32CD32,#90EE90; 
-                           particleCount: 80; maxAge: 2.5; positionSpread: 1.5 1.5 1.5; 
-                           velocityValue: 6 10 6; velocitySpread: 3 3 3"
-          position="8 0 0"
-          animation="property: particle-system.velocityValue; to: 10 15 10; startEvents: firework3; dur: 1200"
-        ></a-entity>
+        <!-- Right Firework - Green -->
+        <a-entity id="firework3" position="8 2 0">
+          <a-sphere color="#00FF00" radius="0.3" position="0 0 0" opacity="0.8"
+            animation__burst="property: scale; to: 7 7 7; dur: 1000; startEvents: burst3"
+            animation__fade="property: material.opacity; to: 0; dur: 1000; startEvents: burst3">
+          </a-sphere>
+          <a-sphere color="#32CD32" radius="0.2" position="1.5 1.5 0" opacity="0.9"
+            animation__burst="property: scale; to: 5 5 5; dur: 800; startEvents: burst3; delay: 100"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst3; delay: 100">
+          </a-sphere>
+          <a-sphere color="#90EE90" radius="0.2" position="-1.5 -1.5 -0.5" opacity="0.9"
+            animation__burst="property: scale; to: 5 5 5; dur: 800; startEvents: burst3; delay: 200"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst3; delay: 200">
+          </a-sphere>
+        </a-entity>
 
-        <!-- High Firework -->
-        <a-entity
-          particle-system="preset: default; color: #1E90FF,#87CEEB,#ADD8E6; 
-                           particleCount: 60; maxAge: 3; positionSpread: 2 2 2; 
-                           velocityValue: 5 8 5; velocitySpread: 4 4 4"
-          position="0 8 0"
-          animation="property: particle-system.velocityValue; to: 8 12 8; startEvents: firework4; dur: 1500"
-        ></a-entity>
+        <!-- High Firework - Blue -->
+        <a-entity id="firework4" position="0 8 0">
+          <a-sphere color="#1E90FF" radius="0.3" position="0 0 0" opacity="0.8"
+            animation__burst="property: scale; to: 6 6 6; dur: 1000; startEvents: burst4"
+            animation__fade="property: material.opacity; to: 0; dur: 1000; startEvents: burst4">
+          </a-sphere>
+          <a-sphere color="#87CEEB" radius="0.2" position="1 1 1" opacity="0.9"
+            animation__burst="property: scale; to: 4 4 4; dur: 800; startEvents: burst4; delay: 100"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst4; delay: 100">
+          </a-sphere>
+          <a-sphere color="#ADD8E6" radius="0.2" position="-1 -1 -1" opacity="0.9"
+            animation__burst="property: scale; to: 4 4 4; dur: 800; startEvents: burst4; delay: 200"
+            animation__fade="property: material.opacity; to: 0; dur: 800; startEvents: burst4; delay: 200">
+          </a-sphere>
+        </a-entity>
+      </a-entity>
 
-        <!-- Golden Sparkles -->
-        <a-entity
-          particle-system="preset: default; color: #FFD700,#FFA500,#FFFF00; 
-                           particleCount: 150; maxAge: 4; positionSpread: 3 3 3; 
-                           velocityValue: 3 6 3; velocitySpread: 2 2 2; size: 0.5"
-          position="0 -2 0"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 6000"
-        ></a-entity>
+      <!-- Golden Sparkles/Stars -->
+      <a-entity 
+        id="golden-sparkles"
+        gps-entity-place="latitude: 19.258066; longitude: 72.963154"
+        position="0 12 0">
+        
+        <!-- Rotating golden stars -->
+        <a-entity 
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 8000">
+          <a-sphere color="#FFD700" radius="0.3" position="3 0 0" 
+            animation="property: scale; to: 1.5 1.5 1.5; direction: alternate; loop: true; dur: 1000">
+          </a-sphere>
+          <a-sphere color="#FFA500" radius="0.25" position="0 0 3" 
+            animation="property: scale; to: 1.3 1.3 1.3; direction: alternate; loop: true; dur: 1200">
+          </a-sphere>
+          <a-sphere color="#FFFF00" radius="0.25" position="-3 0 0" 
+            animation="property: scale; to: 1.4 1.4 1.4; direction: alternate; loop: true; dur: 900">
+          </a-sphere>
+          <a-sphere color="#FFD700" radius="0.2" position="0 0 -3" 
+            animation="property: scale; to: 1.6 1.6 1.6; direction: alternate; loop: true; dur: 1100">
+          </a-sphere>
+          <a-sphere color="#FFA500" radius="0.2" position="2 2 2" 
+            animation="property: scale; to: 1.2 1.2 1.2; direction: alternate; loop: true; dur: 800">
+          </a-sphere>
+          <a-sphere color="#FFFF00" radius="0.2" position="-2 -2 -2" 
+            animation="property: scale; to: 1.7 1.7 1.7; direction: alternate; loop: true; dur: 1300">
+          </a-sphere>
+        </a-entity>
+
+        <!-- Second layer of sparkles -->
+        <a-entity 
+          animation="property: rotation; to: 0 -360 0; loop: true; dur: 10000">
+          <a-sphere color="#FFD700" radius="0.15" position="4 1 1" 
+            animation="property: scale; to: 2 2 2; direction: alternate; loop: true; dur: 700">
+          </a-sphere>
+          <a-sphere color="#FFA500" radius="0.15" position="-4 -1 1" 
+            animation="property: scale; to: 1.8 1.8 1.8; direction: alternate; loop: true; dur: 900">
+          </a-sphere>
+          <a-sphere color="#FFFF00" radius="0.15" position="1 4 -1" 
+            animation="property: scale; to: 1.5 1.5 1.5; direction: alternate; loop: true; dur: 1100">
+          </a-sphere>
+          <a-sphere color="#FFD700" radius="0.15" position="-1 -4 -1" 
+            animation="property: scale; to: 1.9 1.9 1.9; direction: alternate; loop: true; dur: 600">
+          </a-sphere>
+        </a-entity>
       </a-entity>
 
       <!-- Birthday Cake Model (using primitives) -->
@@ -155,14 +224,24 @@
     <script>
       // Trigger fireworks sequence
       function startFireworks() {
-        const events = ['firework1', 'firework2', 'firework3', 'firework4'];
+        const burstEvents = ['burst1', 'burst2', 'burst3', 'burst4'];
         let delay = 0;
         
-        events.forEach((event, index) => {
+        burstEvents.forEach((event, index) => {
           setTimeout(() => {
             document.querySelector('a-scene').emit(event);
+            console.log(`Triggered ${event}`);
           }, delay);
           delay += 800 + Math.random() * 400; // Random delay between 800-1200ms
+        });
+      }
+
+      // Reset fireworks opacity for next show
+      function resetFireworks() {
+        const fireworkSpheres = document.querySelectorAll('#fireworks-container a-sphere');
+        fireworkSpheres.forEach(sphere => {
+          sphere.setAttribute('scale', '1 1 1');
+          sphere.setAttribute('material', 'opacity: 0.8');
         });
       }
 
@@ -170,9 +249,26 @@
       document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
           startFireworks();
-          // Repeat fireworks every 10 seconds
-          setInterval(startFireworks, 10000);
-        }, 2000);
+          // Repeat fireworks every 12 seconds
+          setInterval(() => {
+            resetFireworks();
+            setTimeout(startFireworks, 500);
+          }, 12000);
+        }, 3000);
+      });
+
+      // Add sound effect simulation (visual feedback)
+      document.querySelector('a-scene').addEventListener('burst1', function() {
+        console.log('💥 Central firework burst!');
+      });
+      document.querySelector('a-scene').addEventListener('burst2', function() {
+        console.log('💥 Left firework burst!');
+      });
+      document.querySelector('a-scene').addEventListener('burst3', function() {
+        console.log('💥 Right firework burst!');
+      });
+      document.querySelector('a-scene').addEventListener('burst4', function() {
+        console.log('💥 High firework burst!');
       });
     </script>
   </body>
